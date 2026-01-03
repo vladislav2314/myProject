@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance App - Главная</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .cta-btn.primary {
+            background: white;
+            color: #667eea;
+        }
+        
+        .cta-btn.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .api-docs {
+            background: #f8f9fa;
+            padding: 60px 20px;
+            margin-top: 40px;
+        }
+        
+        .endpoint {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #333;
+            color: white;
+            margin-top: 60px;
+        }
+        
+        #userStatus {
+            text-align: right;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>💰 Финансовый Портал</h1>
+        <p>Управляйте реальным и бонусным балансом, отслеживайте транзакции и получайте аналитику</p>
+        
+        <div id="userStatus" style="display: none;">
+            <p id="welcomeMessage"></p>
+            <a href="dashboard.html" class="cta-btn secondary">Личный кабинет</a>
+        </div>
+        
+        <div id="guestStatus" class="cta-buttons">
+            <a href="login.html" class="cta-btn primary">Войти в аккаунт</a>
+            <a href="register.html" class="cta-btn secondary">Создать аккаунт</a>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3>Двойной баланс</h3>
+            <p>Отдельно управляйте реальными и бонусными средствами с автоматическим учетом</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Детальная аналитика</h3>
+            <p>Полная история транзакций с фильтрацией по типам операций и периодам</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Безопасность</h3>
+            <p>JWT аутентификация, шифрование паролей и защита от SQL-инъекций</p>
+        </div>
+    </div>
+
+    <div class="api-docs">
+        <div class="container">
+            <h2>📚 API Документация</h2>
+            <p>Интегрируйте наш сервис в ваши приложения через REST API</p>
+            
+            <div class="endpoint">
+                <span class="method">POST</span> <strong>/api/register</strong>
+                <p>Регистрация нового пользователя</p>
+                <code>{ "username": "string", "email": "string", "password": "string" }</code>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method">POST</span> <strong>/api/login</strong>
+                <p>Авторизация пользователя</p>
+                <code>{ "username": "string", "password": "string" }</code>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method">GET</span> <strong>/api/user/check/:username</strong>
+                <p>Проверка существования пользователя</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method">GET</span> <strong>/api/user/balance</strong>
+                <p>Получение баланса (требуется токен)</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method">POST</span> <strong>/api/user/balance/update</strong>
+                <p>Обновление баланса (админ или сам пользователь)</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 Finance App. Все права защищены.</p>
+        <p>Техническая поддержка: support@financeapp.com</p>
+    </footer>
+
+    <script>
+        // Проверяем авторизацию при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (token && user) {
+                try {
+                    const userData = JSON.parse(user);
+                    document.getElementById('userStatus').style.display = 'block';
+                    document.getElementById('guestStatus').style.display = 'none';
+                    document.getElementById('welcomeMessage').textContent = 
+                        `Добро пожаловать, ${userData.username}!`;
+                } catch (e) {
+                    console.error('Ошибка парсинга пользователя:', e);
+                    localStorage.clear();
+                }
+            }
+            
+            // Пример API запроса для проверки пользователя
+            async function checkUser() {
+                try {
+                    const response = await fetch('/api/user/check/admin');
+                    const data = await response.json();
+                    console.log('Проверка пользователя:', data);
+                } catch (error) {
+                    console.error('Ошибка API:', error);
+                }
+            }
+            
+            // checkUser();
+        });
+    </script>
+</body>
+</html>

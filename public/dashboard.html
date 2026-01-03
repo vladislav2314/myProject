@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - Finance App</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .user-header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .user-details h2 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .user-details p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .transaction-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .type-deposit {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .type-withdraw {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .type-bonus {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .type-transfer {
+            background: #cce5ff;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">💰 FinanceApp</a>
+            <div class="nav-links">
+                <a href="dashboard.html">Личный кабинет</a>
+                <a href="#" id="logoutBtn">Выйти</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard container">
+        <div id="loading" class="text-center">
+            <div class="spinner"></div>
+            <p>Загрузка данных...</p>
+        </div>
+
+        <div id="dashboardContent" class="hidden">
+            <!-- Заголовок пользователя -->
+            <div class="user-header">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-details">
+                        <h2 id="username">Пользователь</h2>
+                        <p id="userEmail">email@example.com</p>
+                        <p><small>Аккаунт создан: <span id="createdAt">-</span></small></p>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Всего транзакций</div>
+                        <div class="stat-value" id="totalTransactions">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Последняя активность</div>
+                        <div class="stat-value" id="lastActivity">-</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-sm" onclick="refreshData()">Обновить данные</button>
+                    <button class="btn btn-sm" onclick="showAddFundsModal()">Пополнить баланс</button>
+                    <button class="btn btn-sm" onclick="showTransferModal()">Перевести средства</button>
+                </div>
+            </div>
+
+            <!-- Карточки балансов -->
+            <div class="balance-cards">
+                <div class="balance-card real">
+                    <h3>💳 Реальный баланс</h3>
+                    <div class="balance-amount" id="realBalance">0 ₽</div>
+                    <p class="balance-label">Доступно для вывода</p>
+                </div>
+                
+                <div class="balance-card bonus">
+                    <h3>🎁 Бонусный баланс</h3>
+                    <div class="balance-amount" id="bonusBalance">0 ₽</div>
+                    <p class="balance-label">Только для внутренних операций</p>
+                </div>
+            </div>
+
+            <!-- Последние транзакции -->
+            <div class="table-container">
+                <h3>📋 История транзакций</h3>
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Тип</th>
+                            <th>Сумма</th>
+                            <th>Баланс</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <!-- Данные будут загружены через JavaScript -->
+                    </tbody>
+                </table>
+                <div class="text-center mt-20">
+                    <button class="btn" onclick="loadMoreTransactions()">Загрузить еще</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно пополнения баланса -->
+    <div id="addFundsModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Пополнение баланса</h3>
+            <form id="addFundsForm">
+                <div class="form-group">
+                    <label>Тип баланса:</label>
+                    <select id="fundsType" class="form-control">
+                        <option value="real">Реальный баланс</option>
+                        <option value="bonus">Бонусный баланс</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Сумма (₽):</label>
+                    <input type="number" id="fundsAmount" class="form-control" min="1" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Описание:</label>
+                    <input type="text" id="fundsDescription" class="form-control" value="Пополнение баланса">
+                </div>
+                <button type="submit" class="btn btn-block">Пополнить</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно перевода -->
+    <div id="transferModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Перевод средств</h3>
+            <form id="transferForm">
+                <div class="form-group">
+                    <label>Получатель (username):</label>
+                    <input type="text" id="transferTo" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Тип баланса:</label>
+                    <select id="transferType" class="form-control">
+                        <option value="real">Реальный баланс</option>
+                        <option value="bonus">Бонусный баланс</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Сумма (₽):</label>
+                    <input type="number" id="transferAmount" class="form-control" min="1" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Описание:</label>
+                    <input type="text" id="transferDescription" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-block">Перевести</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Стили модальных окон -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+    </style>
+
+    <script>
+        let currentUser = null;
+        let transactionOffset = 0;
+        const TRANSACTIONS_PER_PAGE = 20;
+
+        // Проверка авторизации при загрузке
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            await loadUserData();
+            await loadBalance();
+            await loadTransactions();
+        });
+
+        // Загрузка данных пользователя
+        async function loadUserData() {
+            try {
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch('/api/user/profile', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentUser = data.user;
+                    updateUserInfo();
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('dashboardContent').classList.remove('hidden');
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                showError('Ошибка загрузки данных');
+            }
+        }
+
+        // Обновление информации о пользователе
+        function updateUserInfo() {
+            if (!currentUser) return;
+            
+            document.getElementById('username').textContent = currentUser.username;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            document.getElementById('createdAt').textContent = 
+                new Date(currentUser.created_at).toLocaleDateString('ru-RU');
+        }
+
+        // Загрузка баланса
+        async function loadBalance() {
+            try {
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch('/api/user/balance', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const balance = data.balance;
+                    document.getElementById('realBalance').textContent = 
+                        balance.real_balance.toFixed(2) + ' ₽';
+                    document.getElementById('bonusBalance').textContent = 
+                        balance.bonus_balance.toFixed(2) + ' ₽';
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки баланса:', error);
+            }
+        }
+
+        // Загрузка транзакций
+        async function loadTransactions(reset = true) {
+            if (reset) {
+                transactionOffset = 0;
+                document.getElementById('transactionsBody').innerHTML = 
+                    '<tr><td colspan="5">Загрузка...</td></tr>';
+            }
+            
+            try {
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch(
+                    `/api/user/transactions?limit=${TRANSACTIONS_PER_PAGE}&offset=${transactionOffset}`, 
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const transactions = data.transactions;
+                    updateTransactionsTable(transactions, reset);
+                    
+                    // Обновляем статистику
+                    document.getElementById('totalTransactions').textContent = transactions.length;
+                    if (transactions.length > 0) {
+                        const lastTx = transactions[0];
+                        document.getElementById('lastActivity').textContent = 
+                            new Date(lastTx.created_at).toLocaleDateString('ru-RU');
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки транзакций:', error);
+            }
+        }
+
+        // Обновление таблицы транзакций
+        function updateTransactionsTable(transactions, reset) {
+            const tbody = document.getElementById('transactionsBody');
+            
+            if (reset) {
+                tbody.innerHTML = '';
+            }
+            
+            if (transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">Нет транзакций</td></tr>';
+                return;
+            }
+            
+            transactions.forEach(tx => {
+                const row = document.createElement('tr');
+                
+                const typeClass = `type-${tx.type}`;
+                const balanceType = tx.balance_type === 'real' ? 'Реальный' : 'Бонусный';
+                const amountClass = tx.amount >= 0 ? 'positive' : 'negative';
+                
+                row.innerHTML = `
+                    <td>${new Date(tx.created_at).toLocaleString('ru-RU')}</td>
+                    <td><span class="transaction-type ${typeClass}">${tx.type}</span></td>
+                    <td class="${amountClass}">${tx.amount >= 0 ? '+' : ''}${tx.amount.toFixed(2)} ₽</td>
+                    <td>${balanceType}</td>
+                    <td>${tx.description || '-'}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            transactionOffset += transactions.length;
+        }
+
+        // Загрузить еще транзакций
+        function loadMoreTransactions() {
+            loadTransactions(false);
+        }
+
+        // Обновить все данные
+        async function refreshData() {
+            await Promise.all([
+                loadUserData(),
+                loadBalance(),
+                loadTransactions(true)
+            ]);
+            
+            showSuccess('Данные обновлены');
+        }
+
+        // Показать модальное окно пополнения
+        function showAddFundsModal() {
+            document.getElementById('addFundsModal').classList.remove('hidden');
+        }
+
+        // Показать модальное окно перевода
+        function showTransferModal() {
+            document.getElementById('transferModal').classList.remove('hidden');
+        }
+
+        // Закрыть модальные окна
+        function closeModal() {
+            document.getElementById('addFundsModal').classList.add('hidden');
+            document.getElementById('transferModal').classList.add('hidden');
+        }
+
+        // Обработка пополнения баланса
+        document.getElementById('addFundsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('fundsType').value;
+            const amount = parseFloat(document.getElementById('fundsAmount').value);
+            const description = document.getElementById('fundsDescription').value;
+            
+            if (amount <= 0) {
+                showError('Сумма должна быть положительной');
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('token');
+                const updateData = {
+                    [type === 'real' ? 'real_balance' : 'bonus_balance']: amount,
+                    description: description
+                };
+                
+                const response = await fetch('/api/user/balance/update', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeModal();
+                    await refreshData();
+                    showSuccess('Баланс пополнен');
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                console.error('Ошибка пополнения:', error);
+                showError('Ошибка пополнения баланса');
+            }
+        });
+
+        // Выход из системы
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.clear();
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Вспомогательные функции уведомлений
+        function showSuccess(message) {
+            alert(message); // Можно заменить на красивый toast
+        }
+
+        function showError(message) {
+            alert('Ошибка: ' + message); // Можно заменить на красивый toast
+        }
+
+        // Закрытие модального окна по клику вне его
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

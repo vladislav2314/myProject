@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему - Finance App</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .login-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        
+        .alert-success {
+            background: #efe;
+            color: #3a3;
+            border: 1px solid #cfc;
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .password-toggle .toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .loading {
+            position: relative;
+            color: transparent !important;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>Вход в систему</h1>
+                <p>Введите ваши учетные данные</p>
+            </div>
+            
+            <div id="alert" class="alert" style="display: none;"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Имя пользователя или Email</label>
+                    <input type="text" id="username" class="form-control" placeholder="Введите имя пользователя" required autofocus>
+                </div>
+                
+                <div class="form-group password-toggle">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" class="form-control" placeholder="Введите пароль" required>
+                    <button type="button" class="toggle-btn" onclick="togglePassword()">👁️</button>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-block" id="loginBtn">
+                        Войти
+                    </button>
+                </div>
+                
+                <div class="form-group" style="text-align: center;">
+                    <label>
+                        <input type="checkbox" id="rememberMe">
+                        Запомнить меня
+                    </label>
+                </div>
+            </form>
+            
+            <div class="login-footer">
+                <p>Нет аккаунта? <a href="register.html">Зарегистрируйтесь</a></p>
+                <p><a href="#" onclick="forgotPassword()">Забыли пароль?</a></p>
+                <p><a href="index.html">← Вернуться на главную</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const alertDiv = document.getElementById('alert');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Проверяем, сохранен ли логин
+            const savedUsername = localStorage.getItem('savedUsername');
+            if (savedUsername) {
+                document.getElementById('username').value = savedUsername;
+                document.getElementById('rememberMe').checked = true;
+            }
+            
+            // Обработка отправки формы
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+                
+                // Валидация
+                if (!username || !password) {
+                    showAlert('Заполните все поля', 'error');
+                    return;
+                }
+                
+                // Показываем загрузку
+                loginBtn.classList.add('loading');
+                loginBtn.disabled = true;
+                
+                try {
+                    // Отправляем запрос на сервер
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Сохраняем токен и данные пользователя
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        
+                        // Сохраняем логин если нужно
+                        if (rememberMe) {
+                            localStorage.setItem('savedUsername', username);
+                        } else {
+                            localStorage.removeItem('savedUsername');
+                        }
+                        
+                        showAlert('Успешный вход! Перенаправляем...', 'success');
+                        
+                        // Перенаправляем в личный кабинет
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1000);
+                        
+                    } else {
+                        showAlert(data.error || 'Ошибка входа', 'error');
+                        loginBtn.classList.remove('loading');
+                        loginBtn.disabled = false;
+                    }
+                    
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    showAlert('Ошибка соединения с сервером', 'error');
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+                }
+            });
+            
+            // Автофокус на поле пароля после ввода логина
+            document.getElementById('username').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && this.value.trim()) {
+                    e.preventDefault();
+                    document.getElementById('password').focus();
+                }
+            });
+            
+            // Вход по Enter в поле пароля
+            document.getElementById('password').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('loginForm').requestSubmit();
+                }
+            });
+        });
+        
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.toggle-btn');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+        
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.textContent = message;
+            alertDiv.className = 'alert';
+            
+            if (type === 'error') {
+                alertDiv.classList.add('alert-error');
+            } else if (type === 'success') {
+                alertDiv.classList.add('alert-success');
+            }
+            
+            alertDiv.style.display = 'block';
+            
+            // Автоскрытие успешных сообщений
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        function forgotPassword() {
+            showAlert('Функция восстановления пароля временно недоступна. Обратитесь к администратору.', 'error');
+        }
+    </script>
+</body>
+</html>
